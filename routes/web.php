@@ -20,7 +20,7 @@ $router->get('/', function () use ($router) {
 $router->get('branches','BranchController@index');
 $router->get('products','ProductController@index');
 $router->get('transaction_chart','HomeController@transaction_chart');
-$router->get('storage/{dir}/{filename}','StorageController');
+$router->get('storages/{dir}/{filename}','StorageController');
 
 require dirname(__FILE__).'/sections/admin.php';
 require dirname(__FILE__).'/sections/customer.php';

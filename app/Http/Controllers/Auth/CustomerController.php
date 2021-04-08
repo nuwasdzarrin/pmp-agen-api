@@ -20,30 +20,8 @@ class CustomerController extends Controller
         //
     }
 
-    public function register(Request $request)
-    {
-      $this->validate($request,[
-        'email' => 'required|unique:m_customers,email',
-        'name' => 'required',
-        'password' => 'required',
-        'gender' => 'required',
-        'phone' => 'required',
-      ]);
-      DB::beginTransaction();
-      DB::table('m_customers')->insert([
-        'name' => $request->name,
-        'email' => $request->email,
-        'gender' => $request->gender,
-        'phone' => $request->phone,
-        'password' => Hash::make($request->password),
-      ]);
-      DB::commit();
-      return response()->json(['message' => 'OK']);
-    }
-
     public function login(Request $request)
     {
-      // dd($request);
       $this->validate($request,[
         'email' => 'required',
         'password' => 'required'
@@ -56,6 +34,57 @@ class CustomerController extends Controller
         'status' => 'OK',
         'data' => $user
       ]);
+    }
+
+    public function register(Request $request, $id)
+    {
+        $this->validate($request,[
+            'name' => 'required|string',
+            'email' => 'required|unique:m_customers,email',
+            'password' => 'required|string',
+            'phone' => 'required|string',
+            'address' => 'string|nullable',
+            'img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
+        ]);
+
+        $img = $request->hasFile('img') ? $request->file('img')->store('agents') : null;
+        DB::beginTransaction();
+        DB::table('m_customers')->insert([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'img' => $img,
+        ]);
+        DB::commit();
+        return response()->json(['message' => 'OK']);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->validate($request,[
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'password' => 'required|string',
+            'phone' => 'required|string',
+            'address' => 'string|nullable',
+            'img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
+        ]);
+
+        $old = DB::table('m_customers')->where('id', $id)->first();
+        $img = $request->hasFile('img') ? $request->file('img')->store('agents') : $old->img;
+        DB::beginTransaction();
+        DB::table('m_customers')->where('id', $id)->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'img' => $img,
+        ]);
+        DB::commit();
+        return response()->json(['message' => 'OK']);
     }
 
     public function get_users()

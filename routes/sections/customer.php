@@ -1,7 +1,7 @@
 <?php
 
 $router->group([
-  'prefix' => 'agen'
+  'prefix' => 'agent'
 ],function() use ($router){
   /* Auth Namespace */
   $router->group([
@@ -16,7 +16,7 @@ $router->group([
     ],function() use ($router){
       $router->post('logout','CustomerController@logout');
       $router->get('profile','CustomerController@get_user');
-      $router->put('profile/{id}','CustomerController@get_users');
+      $router->put('profile/{id}','CustomerController@update');
 
       $router->get('get_users','CustomerController@get_users');
 

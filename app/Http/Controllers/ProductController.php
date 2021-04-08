@@ -8,24 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public static function rules(Request $request = null)
-    {
-        return [
-            'store' => [
-                'name' => 'required|string',
-                'price' => 'required|integer|min:1',
-                'stock' => 'required|integer|min:1',
-                'img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
-            ],
-            'update' => [
-                'name' => 'required|string',
-                'price' => 'required|integer|min:1',
-                'stock' => 'required|integer|min:1',
-                'img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
-            ]
-        ];
-    }
-
     /**
      * Create a new controller instance.
      *
