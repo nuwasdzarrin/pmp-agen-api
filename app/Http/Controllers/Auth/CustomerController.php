@@ -27,8 +27,8 @@ class CustomerController extends Controller
         'password' => 'required'
       ]);
       $user = Customer::where('email', $request->email)->first();
-      if (!$user) return response()->json(['status' => 'ERROR','message' => 'Unauthenticated'],401);
-      if (!Hash::check($request->password,$user->password)) return response()->json(['status' => 'ERROR','message' => 'Unauthenticated'],401);
+      if (!$user) return response()->json(['status' => 'ERROR','message' => 'Email/Password not found'],401);
+      if (!Hash::check($request->password,$user->password)) return response()->json(['status' => 'ERROR','message' => 'Email/Password not found'],401);
       $user->token = $user->createToken('Customer',['customer'])->accessToken;
       return response()->json([
         'status' => 'OK',
@@ -36,7 +36,7 @@ class CustomerController extends Controller
       ]);
     }
 
-    public function register(Request $request, $id)
+    public function register(Request $request)
     {
         $this->validate($request,[
             'name' => 'required|string',
@@ -64,24 +64,23 @@ class CustomerController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,[
-            'name' => 'required|string',
-            'email' => 'required|email',
-            'password' => 'required|string',
-            'phone' => 'required|string',
+            'name' => 'string|nullable',
+            'email' => 'email|nullable',
+            'password' => 'string|nullable',
+            'phone' => 'string|nullable',
             'address' => 'string|nullable',
             'img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
         ]);
 
         $old = DB::table('m_customers')->where('id', $id)->first();
-        $img = $request->hasFile('img') ? $request->file('img')->store('agents') : $old->img;
         DB::beginTransaction();
         DB::table('m_customers')->where('id', $id)->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'img' => $img,
+            'name' => $request->name ? $request->name : $old->name,
+            'email' => $request->email ? $request->email : $old->email,
+            'password' => $request->password ? Hash::make($request->password) : $old->password,
+            'phone' => $request->phone ? $request->phone : $old->phone,
+            'address' => $request->address ? $request->address : $old->address,
+            'img' => $request->hasFile('img') ? $request->file('img')->store('agents') : $old->img,
         ]);
         DB::commit();
         return response()->json(['message' => 'OK']);

@@ -27,7 +27,7 @@ $router->group([
   $router->group([
     'middleware' => 'auth:customer'
   ],function() use ($router){
-    $router->post('select_user_branch','BranchController@select_user_branch');
+//    $router->post('select_user_branch','BranchController@select_user_branch');
     $router->post('save_lat_lng','BranchController@save_lat_lng');
 
     /* transaction group */

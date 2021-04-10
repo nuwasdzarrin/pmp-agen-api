@@ -17,23 +17,23 @@ class StatusSeeder extends Seeder
       $data = [
         [
           'id' => 1,
-          'name' => 'Open Order'
+          'name' => 'Order'
         ],
         [
           'id' => 2,
-          'name' => 'Sedang Diproses Admin'
+          'name' => 'Process'
         ],
         [
           'id' => 3,
-          'name' => 'On Going'
+          'name' => 'Shipping'
         ],
         [
           'id' => 4,
-          'name' => 'Selesai'
+          'name' => 'Finish'
         ],
         [
           'id' => 5,
-          'name' => 'Batal'
+          'name' => 'Cancel'
         ],
       ];
       DB::table('m_statuses')->insert($data);

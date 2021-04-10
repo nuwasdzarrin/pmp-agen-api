@@ -23,14 +23,10 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
       $data = DB::table('t_transactions as t');
-      $data = $data->leftJoin('m_branches as b','b.id','t.branch_id');
       $data = $data->leftJoin('m_statuses as s','s.id','t.status_id');
       $data = $data->leftJoin('m_products as p','p.id','t.product_id');
       $data = $data->leftJoin('m_customers as c','c.id','t.customer_id');
-      if (auth()->user()->tokenCan('vendor')) {
-        /* Vendor */
-        $data = $data->where('t.branch_user_id', auth('vendor')->id());
-      } elseif (auth()->user()->tokenCan('customer')) {
+      if (auth('customer')->user()) {
         /* Customer */
         $data = $data->where('t.customer_id', auth('customer')->id());
       } else {
@@ -42,9 +38,6 @@ class TransactionController extends Controller
       $data = $data->select([
         't.id',
         't.code',
-        // 'b.name as vendor_location',
-        // 't.gender as vendor_gender',
-        'b.name as branch',
         's.name as status',
         'p.name as product_name',
         't.total_price as product_price',
@@ -53,8 +46,7 @@ class TransactionController extends Controller
         's.name as status',
         DB::raw("date(t.created_at) as transaction_date"),
         'c.name as customer_name',
-        't.address as customer_address',
-        'c.gender as customer_gender',
+//        'c.address as customer_address',
       ]);
       $data = $data->orderBy('status','asc')->orderBy('id','desc')->paginate(20);
       return response()->json(['message' => 'OK', 'data' => $data]);
@@ -63,28 +55,26 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
       $this->validate($request,[
-        'gender' => 'required',
-        'product_id' => 'required',
-        'gender' => 'required',
-        'schedule' => 'required',
-        'address' => 'required'
+        'product_id' => 'required|exists:m_products,id',
+        'quantity' => 'required|numeric',
+        'total_price' => 'numeric|nullable',
+        'schedule' => 'string|nullable',
       ]);
       DB::beginTransaction();
       $code = new Numbering;
       $code = $code->generate();
       $user = auth('customer')->user();
-      if (!$user->selected_branch_id) return response()->json(['message' => 'User Branch not found'],500);
+//      if (!$user->selected_branch_id) return response()->json(['message' => 'User Branch not found'],500);
       $product = DB::table('m_products')->where('id', $request->product_id)->first();
       DB::table('t_transactions')->insert([
-        'branch_id' => $user->selected_branch_id,
+//        'branch_id' => $user->selected_branch_id,
         'customer_id' => $user->id,
         'status_id' => 1,
         'code' => $code,
-        'gender' => $request->gender,
         'product_id' => $product->id,
-        'total_price' => $product->price,
-        'address' => $request->address,
-        'schedule' => Carbon::parse($request->schedule),
+        'quantity' => $request->quantity,
+        'total_price' => $request->total_price ? $request->total_price : ($request->quantity * $product->price),
+        'schedule' => $request->schedule ? Carbon::parse($request->schedule): Carbon::now()->addDay(),
       ]);
       DB::commit();
 

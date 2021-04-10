@@ -14,7 +14,7 @@
 */
 
 $router->get('/', function () use ($router) {
-  return response()->json(['message' => "Welcome to PMP Agen. this site is for API purpose only!"]);
+  return response()->json(['message' => "Welcome to PMP Agent. this site is for API purpose only!"]);
   // return $router->app->version();
 });
 $router->get('branches','BranchController@index');
@@ -23,5 +23,5 @@ $router->get('transaction_chart','HomeController@transaction_chart');
 $router->get('storages/{dir}/{filename}','StorageController');
 
 require dirname(__FILE__).'/sections/admin.php';
-require dirname(__FILE__).'/sections/customer.php';
+require dirname(__FILE__) . '/sections/agent.php';
 require dirname(__FILE__).'/sections/vendor.php';

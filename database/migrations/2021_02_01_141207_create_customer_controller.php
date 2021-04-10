@@ -19,7 +19,6 @@ class CreateCustomerController extends Migration
             $table->string('email')->unique();
             $table->string('phone');
             $table->string('password');
-            $table->string('gender', 1)->nullable();
             $table->string('address')->nullable();
             $table->string('img')->nullable();
             $table->string('latitude')->nullable();
