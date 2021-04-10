@@ -26,7 +26,8 @@ class TransactionController extends Controller
       $data = $data->leftJoin('m_statuses as s','s.id','t.status_id');
       $data = $data->leftJoin('m_products as p','p.id','t.product_id');
       $data = $data->leftJoin('m_customers as c','c.id','t.customer_id');
-      if (auth('customer')->user()) {
+      $user = auth('customer')->user() ?? auth('customer')->user();
+      if ($user->tokenCan('customer')) {
         /* Customer */
         $data = $data->where('t.customer_id', auth('customer')->id());
       } else {
@@ -46,7 +47,7 @@ class TransactionController extends Controller
         's.name as status',
         DB::raw("date(t.created_at) as transaction_date"),
         'c.name as customer_name',
-//        'c.address as customer_address',
+        'c.address as customer_address',
       ]);
       $data = $data->orderBy('status','asc')->orderBy('id','desc')->paginate(20);
       return response()->json(['message' => 'OK', 'data' => $data]);
@@ -90,26 +91,16 @@ class TransactionController extends Controller
       $data = $data->selectRaw('
         t.id,
         t.code,
-        t.branch_id,
         t.customer_id,
-        t.gender,
-        t.branch_user_id,
         t.schedule,
         t.status_id,
-        t.address,
         s.name as status,
         p.name as product_name,
         t.total_price
       ');
       $data = $data->first();
 
-      $data->customer = DB::table('m_customers')->where('id', $data->customer_id)->select('name','gender','phone','email')->first();
-      $data->customer->address = $data->address;
-      $data->vendor_location = DB::table('m_branches')->where('id', $data->branch_id)->select('name','address')->first();
-      $data->vendor = DB::table('m_branch_users')->where('id', $data->branch_user_id)->select('name','phone')->first();
-      unset($data->address);
-      unset($data->branch_user_id);
-      unset($data->customer_id);
+      $data->customer = DB::table('m_customers')->where('id', $data->customer_id)->select('name','phone','email','address')->first();
 
       return response()->json(['message' => 'OK','data' => $data]);
     }

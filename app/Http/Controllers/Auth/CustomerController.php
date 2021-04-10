@@ -100,7 +100,6 @@ class CustomerController extends Controller
     public function logout()
     {
       DB::table('m_customers')->where('id', auth('customer')->id())->update([
-        'selected_branch_id' => null,
         'latitude' => null,
         'longitude' => null,
       ]);
