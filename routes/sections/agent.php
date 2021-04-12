@@ -9,7 +9,6 @@ $router->group([
   ],function() use ($router){
     $router->post('register','CustomerController@register');
     $router->post('login','CustomerController@login');
-    $router->get('products','ProductController@index');
 
     /* auth middleware */
     $router->group([
@@ -30,6 +29,7 @@ $router->group([
   ],function() use ($router){
 //    $router->post('select_user_branch','BranchController@select_user_branch');
     $router->post('save_lat_lng','BranchController@save_lat_lng');
+    $router->get('products','ProductController@index');
 
     /* transaction group */
     $router->group([
