@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ProductController extends Controller
+class ArticleController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -20,24 +20,22 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-      $data = DB::table('m_products')->select('*')->get();
+      $data = DB::table('articles')->select('*')->get();
       return response()->json(['data' => $data]);
     }
 
     public function store(Request $request)
     {
       $this->validate($request,[
-        'name' => 'required|string',
-        'price' => 'required|integer|min:1',
-        'stock' => 'required|integer|min:1',
+        'title' => 'required|string',
+        'content' => 'required|string',
         'img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
       ]);
-      $img = $request->hasFile('img') ? $request->file('img')->store('products') : null;
+      $img = $request->hasFile('img') ? $request->file('img')->store('articles') : null;
       DB::beginTransaction();
-      DB::table('m_products')->insert([
-        'name' => $request->name,
-        'price' => $request->price,
-        'stock' => $request->stock,
+      DB::table('articles')->insert([
+        'title' => $request->title,
+        'content' => $request->content,
         'img' => $img,
       ]);
       DB::commit();
@@ -46,26 +44,24 @@ class ProductController extends Controller
 
     public function show($id)
     {
-      $data = DB::table('m_products')->where('id', $id)->first();
+      $data = DB::table('articles')->where('id', $id)->first();
       return response()->json(['data' => $data]);
     }
 
     public function update(Request $request, $id)
     {
       $this->validate($request,[
-          'name' => 'required|string',
-          'price' => 'integer|min:1',
-          'stock' => 'integer|min:1',
+          'title' => 'required|string',
+          'content' => 'string|nullable',
           'img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
       ]);
-      $old = DB::table('m_products')->where('id', $id)->first();
-      $img = $request->hasFile('img') ? $request->file('img')->store('products') : $old->img;
+      $old = DB::table('articles')->where('id', $id)->first();
+      $img = $request->hasFile('img') ? $request->file('img')->store('articles') : $old->img;
       DB::beginTransaction();
-      $data = DB::table('m_products')->where('id', $id)->update([
-        'name' => $request->name,
-        'price' => $request->price ?? $old->price,
-        'stock' => $request->stock ?? $old->stock,
-        'img' => $img,
+      $data = DB::table('articles')->where('id', $id)->update([
+          'title' => $request->title ?? $old->title,
+          'content' => $request->content ?? $old->content,
+          'img' => $img,
       ]);
       DB::commit();
       return response()->json(['message' => 'OK']);
@@ -73,8 +69,6 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-      DB::table('m_products')->where('id', $id)->delete();
+      DB::table('articles')->where('id', $id)->delete();
     }
-
-    //
 }

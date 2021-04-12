@@ -24,6 +24,12 @@ $router->group([
     $router->put('products/{id}','ProductController@update');
     $router->delete('products/{id}','ProductController@destroy');
 
+    $router->get('articles','ArticleController@index');
+    $router->post('articles','ArticleController@store');
+    $router->get('articles/{id}','ArticleController@show');
+    $router->put('articles/{id}','ArticleController@update');
+    $router->delete('articles/{id}','ArticleController@destroy');
+
     $router->get('transaction/select_vendor/{id}','TransactionController@select_vendor');
     $router->post('transaction/submit_vendor/{id}','TransactionController@submit_vendor');
 

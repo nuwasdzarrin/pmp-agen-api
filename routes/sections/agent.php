@@ -29,7 +29,9 @@ $router->group([
   ],function() use ($router){
 //    $router->post('select_user_branch','BranchController@select_user_branch');
     $router->post('save_lat_lng','BranchController@save_lat_lng');
+
     $router->get('products','ProductController@index');
+    $router->get('articles','ArticleController@index');
 
     /* transaction group */
     $router->group([
