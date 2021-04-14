@@ -3,17 +3,15 @@
 $router->group([
   'prefix' => 'admin'
 ],function() use ($router){
-  $router->group([
-    'namespace' => 'Auth'
-  ],function() use ($router){
-    $router->post('login','AdminController@login');
+  $router->group([],function() use ($router){
+    $router->post('login','Auth\AdminController@login');
     $router->get('articles','ArticleController@index');
 
     $router->group([
       'middleware' => 'auth:admin'
     ],function() use ($router){
-      $router->get('get_user','AdminController@get_user');
-      $router->post('logout','AdminController@logout');
+      $router->get('get_user','Auth\AdminController@get_user');
+      $router->post('logout','Auth\AdminController@logout');
     });
   });
 
