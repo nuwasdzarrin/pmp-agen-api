@@ -3,15 +3,16 @@
 $router->group([
   'prefix' => 'admin'
 ],function() use ($router){
-  $router->group([],function() use ($router){
-    $router->post('login','Auth\AdminController@login');
-    $router->get('articles','ArticleController@index');
+  $router->group([
+      'namespace' => 'Auth'
+  ],function() use ($router){
+    $router->post('login','AdminController@login');
 
     $router->group([
       'middleware' => 'auth:admin'
     ],function() use ($router){
-      $router->get('get_user','Auth\AdminController@get_user');
-      $router->post('logout','Auth\AdminController@logout');
+      $router->get('get_user','AdminController@get_user');
+      $router->post('logout','AdminController@logout');
     });
   });
 
@@ -23,6 +24,7 @@ $router->group([
     $router->put('products/{id}','ProductController@update');
     $router->delete('products/{id}','ProductController@destroy');
 
+    $router->get('articles','ArticleController@index');
     $router->post('articles','ArticleController@store');
     $router->get('articles/{id}','ArticleController@show');
     $router->put('articles/{id}','ArticleController@update');
