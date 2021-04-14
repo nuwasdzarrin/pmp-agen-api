@@ -7,6 +7,7 @@ $router->group([
     'namespace' => 'Auth'
   ],function() use ($router){
     $router->post('login','AdminController@login');
+    $router->get('articles','ArticleController@index');
 
     $router->group([
       'middleware' => 'auth:admin'
@@ -24,7 +25,6 @@ $router->group([
     $router->put('products/{id}','ProductController@update');
     $router->delete('products/{id}','ProductController@destroy');
 
-    $router->get('articles','ArticleController@index');
     $router->post('articles','ArticleController@store');
     $router->get('articles/{id}','ArticleController@show');
     $router->put('articles/{id}','ArticleController@update');
@@ -38,5 +38,17 @@ $router->group([
     $router->get('branches/{id}','BranchController@show');
     $router->put('branches/{id}','BranchController@update');
     $router->delete('branches/{id}','BranchController@destroy');
+
+    /* agents group */
+    $router->group([
+        'prefix' => 'agents',
+        'namespace' => 'Auth'
+    ],function() use ($router) {
+        $router->get('/','CustomerController@get_users');
+        $router->get('/{id}','CustomerController@show');
+        $router->post('/','CustomerController@register');
+        $router->put('/{id}','CustomerController@update');
+        $router->delete('/{id}','CustomerController@destroy');
+    });
   });
 });

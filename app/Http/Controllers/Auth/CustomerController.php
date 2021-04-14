@@ -107,5 +107,16 @@ class CustomerController extends Controller
       return response()->json(['message' => 'OK']);
     }
 
+    public function show($id)
+    {
+        $data = DB::table('m_customers')->where('id', $id)->first();
+        return response()->json(['data' => $data]);
+    }
+
+    public function destroy($id)
+    {
+        DB::table('m_customers')->where('id', $id)->delete();
+    }
+
     //
 }
