@@ -51,7 +51,7 @@ class ArticleController extends Controller
     public function update(Request $request, $id)
     {
       $this->validate($request,[
-          'title' => 'required|string',
+          'title' => 'string|nullable',
           'content' => 'string|nullable',
           'img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
       ]);
